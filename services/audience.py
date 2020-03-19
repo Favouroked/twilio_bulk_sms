@@ -3,7 +3,9 @@ from pymongo import MongoClient
 
 from jinja2 import Template
 
-from utils.sms import send_sms
+from .templates import get_template
+
+from utils.sms import send_bulk_sms
 
 client = MongoClient('mongodb://localhost/')
 
@@ -29,7 +31,8 @@ def update_audience(audience_id, data):
     return audience
 
 
-def message_audience(audience_id, template, args):
+def message_audience(audience_id, template_id, args):
+    template = get_template(template_id)
     message = template['message']
     t = Template(message)
     text = t.render(**args)
@@ -37,8 +40,7 @@ def message_audience(audience_id, template, args):
     if not audience:
         raise Exception('Invalid audience_id')
     users = audience['users']
-    for user in users:
-        send_sms(user['phone'], text)
+    send_bulk_sms(users, text)
 
 
 def add_to_audience(audience_id, user_data):

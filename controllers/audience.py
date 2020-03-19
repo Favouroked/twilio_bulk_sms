@@ -1,6 +1,5 @@
 from flask import Blueprint, request
 
-from jobs.sms import sms_queue
 from services import audience as audience_service
 from utils.request import validate_body
 from utils.response import response, error_response
@@ -49,7 +48,7 @@ def message_audience():
     status, missing_field = validate_body(body, ['audience_id', 'template_id', 'args'])
     if not status:
         return error_response(f'{missing_field} is missing')
-    sms_queue.put(body)
+    audience_service.message_audience(body['audience_id'], body['template_id'], body['args'])
     return response(True, 'Success', None)
 
 
