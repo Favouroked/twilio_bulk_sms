@@ -9,8 +9,7 @@ TWILIO_NOTIFY_SERVICE_SID = os.getenv('TWILIO_NOTIFY_SERVICE_SID')
 client = Client(ACCOUNT_SID, AUTH_TOKEN)
 
 
-def send_bulk_sms(to, body):
-    numbers = list(map(lambda user: user['phone'], to))
+def send_bulk_sms(numbers, body):
     bindings = list(map(lambda number: json.dumps({'binding_type': 'sms', 'address': number}), numbers))
     print("=====> To Bindings :>", bindings, "<: =====")
     notification = client.notify.services(TWILIO_NOTIFY_SERVICE_SID).notifications.create(
